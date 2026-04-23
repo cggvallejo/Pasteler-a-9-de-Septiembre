@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: pasteleria-9-septiembre
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run preview
+    buildCommand: npm install && npm run build
+    publishPath: dist
