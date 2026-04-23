@@ -1,8 +1,5 @@
 services:
-  - type: web
+  - type: static
     name: pasteleria-9-septiembre
-    env: node
-    plan: free
     buildCommand: npm install && npm run build
-    startCommand: npm run preview
     publishPath: dist
