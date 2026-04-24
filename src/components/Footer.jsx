@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram, Globe, Mail, MapPin } from 'lucide-react';
+import { Instagram, Facebook, Mail, MapPin } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -11,7 +11,8 @@ const Footer = () => {
               <img
                 src="/logo.png"
                 alt="Pastelería 9 de Septiembre"
-                className="h-[clamp(50px, 8vw, 75px)] w-auto object-contain"
+                style={{ height: 'clamp(100px, 12vw, 150px)', width: 'auto', objectFit: 'contain' }}
+                className="opacity-100 transition-opacity"
               />
             </div>
             <p className="text-body-sm text-soft max-w-[280px] leading-[1.8]">
@@ -45,8 +46,8 @@ const Footer = () => {
           <div className="flex flex-col items-center md:items-start">
             <h5 className="text-label text-accent mb-lg" style={{marginBottom: 'clamp(1.25rem, 2.5vw, 2rem)'}}>Social</h5>
             <div className="flex gap-md">
-              <a href="#" className="social-icon shadow-premium"><Instagram size={16} /></a>
-              <a href="#" className="social-icon shadow-premium"><Globe size={16} /></a>
+              <a href="https://www.instagram.com/09septiembre_pasteleria/" target="_blank" rel="noopener noreferrer" className="social-icon shadow-premium" style={{ '--hover-color': '#E4405F' }}><Instagram size={22} /></a>
+              <a href="https://www.facebook.com/profile.php?id=61565226608758" target="_blank" rel="noopener noreferrer" className="social-icon shadow-premium" style={{ '--hover-color': '#1877F2' }}><Facebook size={22} /></a>
             </div>
           </div>
         </div>

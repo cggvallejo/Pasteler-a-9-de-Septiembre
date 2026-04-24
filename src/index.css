@@ -474,8 +474,8 @@ body, p, span, li, a {
 
 .social-icon {
   background: var(--bg-soft);
-  width: clamp(38px, 4vw, 45px);
-  height: clamp(38px, 4vw, 45px);
+  width: clamp(42px, 5vw, 52px);
+  height: clamp(42px, 5vw, 52px);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -486,8 +486,9 @@ body, p, span, li, a {
 }
 
 .social-icon:hover {
-  background: var(--primary-pink);
-  color: var(--accent-pink);
+  background: var(--hover-color, var(--primary-pink));
+  color: white;
+  border-color: transparent;
 }
 
 /* Chatbot Styles */
@@ -836,4 +837,65 @@ body, p, span, li, a {
   border-left: 2px solid var(--accent-pink);
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+/* Social Sidebar */
+.social-sidebar {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 1000;
+}
+
+.social-sidebar-link {
+  background: white;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid rgba(240, 98, 146, 0.1);
+  transition: var(--transition-smooth);
+  text-decoration: none;
+  position: relative;
+}
+
+.social-sidebar-link:hover {
+  color: white;
+  background: var(--hover-color);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  border-color: transparent;
+}
+
+.social-sidebar-tooltip {
+  position: absolute;
+  right: 120%;
+  background: var(--text-main);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition-smooth);
+  white-space: nowrap;
+}
+
+.social-sidebar-link:hover .social-sidebar-tooltip {
+  opacity: 1;
+  right: 135%;
+}
+
+@media (max-width: 1024px) {
+  .social-sidebar {
+    display: none;
+  }
 }

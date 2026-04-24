@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Menu, X, Instagram, Globe } from 'lucide-react';
+import { ShoppingCart, Menu, X, Instagram, Facebook } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Mascot from './Mascot';
@@ -96,6 +96,10 @@ const Navbar = () => {
                 <a href="#pedidos" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Pedidos</a>
                 <a href="#tienda" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Colección</a>
                 <a href="#contacto" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Contacto</a>
+                <div className="flex gap-lg justify-center mt-lg pt-lg border-t border-[rgba(0,0,0,0.05)]">
+                  <a href="https://www.instagram.com/09septiembre_pasteleria/" target="_blank" rel="noopener noreferrer" className="social-icon shadow-premium" style={{ '--hover-color': '#E4405F' }}><Instagram size={24} /></a>
+                  <a href="https://www.facebook.com/profile.php?id=61565226608758" target="_blank" rel="noopener noreferrer" className="social-icon shadow-premium" style={{ '--hover-color': '#1877F2' }}><Facebook size={24} /></a>
+                </div>
               </div>
             </div>
           </motion.div>

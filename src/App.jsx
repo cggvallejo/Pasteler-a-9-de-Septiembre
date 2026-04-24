@@ -9,12 +9,14 @@ import ContactConcierge from './components/ContactConcierge';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import Mascot from './components/Mascot';
+import SocialSidebar from './components/SocialSidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   return (
     <div className="App">
       <Navbar />
+      <SocialSidebar />
       <main>
         <Hero />
         <BrandManifesto />
