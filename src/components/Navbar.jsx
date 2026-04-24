@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Menu, X, Instagram, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import Mascot from './Mascot';
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,40 +25,42 @@ const Navbar = () => {
 
   return (
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`} style={{
-      background: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'linear-gradient(180deg, #FCE4EC 0%, #FFF7FB 100%)',
+      background: isScrolled ? 'rgba(252, 251, 250, 0.95)' : 'linear-gradient(180deg, var(--primary-pink) 0%, rgba(253, 241, 246, 0) 100%)',
+      backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+      borderBottom: isScrolled ? '1px solid rgba(0,0,0,0.05)' : 'none'
     }}>
       <div className="container flex items-center justify-between">
         <div className="flex-1 flex items-center">
-          <button className="md-hide" onClick={() => setIsMenuOpen(true)} style={{background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', color: 'inherit'}}>
+          <button className="md-hide" onClick={() => setIsMenuOpen(true)} style={{background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', color: 'var(--text-main)'}}>
             <Menu size={24} />
           </button>
-          <div className="md-flex gap-md">
+          <div className="md-flex gap-lg flex-1 justify-center">
             <a href="#inicio" className="nav-item">Inicio</a>
             <a href="#galeria" className="nav-item">Galería</a>
             <a href="#pedidos" className="nav-item">Pedidos</a>
           </div>
         </div>
 
-        <div className="flex-none px-4 md:px-8">
+        <div className="flex-none px-4 md:px-8 flex justify-center">
           <img 
             src="/logo.png" 
             alt="Pastelería 9 de Septiembre" 
             className="navbar-logo"
             style={{ 
-              height: isScrolled ? '60px' : '95px', 
+              height: isScrolled ? '55px' : '90px', 
               width: 'auto',
-              transition: 'var(--transition)',
+              transition: 'var(--transition-smooth)',
               display: 'block'
             }} 
           />
         </div>
 
-        <div className="flex-1 flex justify-end items-center gap-sm md:gap-md">
-          <div className="md-flex gap-md">
+        <div className="flex-1 flex justify-end items-center gap-lg">
+          <div className="md-flex gap-lg flex-1 justify-center">
             <a href="#tienda" className="nav-item">Colección</a>
             <a href="#contacto" className="nav-item">Contacto</a>
           </div>
-          <button style={{background: 'none', border: 'none', position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'inherit'}}>
+          <button style={{background: 'none', border: 'none', position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-main)'}}>
             <ShoppingCart size={22} />
             <span style={{
               position: 'absolute', top: '-8px', right: '-8px', 
@@ -72,21 +76,27 @@ const Navbar = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
-            initial={{ x: '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="mobile-menu-overlay"
+            style={{
+              background: 'rgba(252, 251, 250, 0.98)',
+              backdropFilter: 'blur(20px)'
+            }}
           >
-            <button style={{alignSelf: 'flex-end', background: 'none', border: 'none', marginBottom: '3rem', cursor: 'pointer'}} onClick={() => setIsMenuOpen(false)}>
-              <X size={32} />
-            </button>
-             <div className="flex flex-col gap-md text-center">
-              <a href="#inicio" className="nav-item" style={{ fontSize: '1.5rem' }} onClick={() => setIsMenuOpen(false)}>Inicio</a>
-              <a href="#galeria" className="nav-item" style={{ fontSize: '1.5rem' }} onClick={() => setIsMenuOpen(false)}>Galería</a>
-              <a href="#pedidos" className="nav-item" style={{ fontSize: '1.5rem' }} onClick={() => setIsMenuOpen(false)}>Pedidos</a>
-              <a href="#tienda" className="nav-item" style={{ fontSize: '1.5rem' }} onClick={() => setIsMenuOpen(false)}>Colección</a>
-              <a href="#contacto" className="nav-item" style={{ fontSize: '1.5rem' }} onClick={() => setIsMenuOpen(false)}>Contacto</a>
+            <div className="container" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: 'var(--space-md)' }}>
+              <button style={{alignSelf: 'flex-end', background: 'none', border: 'none', marginBottom: 'var(--space-lg)', cursor: 'pointer', color: 'var(--text-main)'}} onClick={() => setIsMenuOpen(false)}>
+                <X size={32} />
+              </button>
+              <div className="flex flex-col gap-md text-center justify-center flex-1">
+                <a href="#inicio" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Inicio</a>
+                <a href="#galeria" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Galería</a>
+                <a href="#pedidos" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Pedidos</a>
+                <a href="#tienda" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Colección</a>
+                <a href="#contacto" className="text-display-md" onClick={() => setIsMenuOpen(false)}>Contacto</a>
+              </div>
             </div>
           </motion.div>
         )}

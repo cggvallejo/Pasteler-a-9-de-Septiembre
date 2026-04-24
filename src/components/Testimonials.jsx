@@ -12,14 +12,14 @@ const Testimonials = () => {
   return (
     <section className="section-py bg-white">
       <div className="container">
-        <div className="text-center" style={{marginBottom: '5rem'}}>
+        <div className="text-center" style={{marginBottom: 'var(--space-lg)'}}>
           <span className="text-label">Experiencias Dulces</span>
-          <h3 className="text-display-md" style={{marginTop: '1rem'}}>Lo que dicen nuestros clientes</h3>
+          <h3 className="text-display-md" style={{marginTop: 'var(--space-sm)'}}>Lo que dicen nuestros clientes</h3>
         </div>
 
-        <div className="grid grid-3 gap-md">
+        <div className="grid grid-3 gap-lg">
           {testimonials.map((t) => (
-            <motion.div 
+            <motion.div
               key={t.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -27,17 +27,27 @@ const Testimonials = () => {
               transition={{ duration: 0.8 }}
               className="bg-soft"
               style={{
-                padding: '3rem', borderRadius: '4px',
-                textAlign: 'center', position: 'relative'
+                padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 2vw, 1.5rem)',
+                borderRadius: 'var(--card-radius)',
+                textAlign: 'center',
+                position: 'relative',
+                boxShadow: 'var(--shadow-premium)',
+                border: '1px solid rgba(0,0,0,0.02)'
               }}
             >
-              <Quote size={32} style={{color: 'var(--primary-pink)', marginBottom: '1.5rem', opacity: 0.5}} />
-              <p className="text-hand" style={{fontSize: '1.8rem', marginBottom: '2.5rem', color: 'var(--text-main)', lineHeight: '1.2'}}>
+              <Quote size={20} style={{color: 'var(--accent-pink)', marginBottom: 'clamp(0.75rem, 1.5vw, 1.25rem)', opacity: 0.2}} />
+              <p className="text-hand" style={{
+                fontSize: 'clamp(1.2rem, 2vw, 1.6rem)',
+                marginBottom: 'clamp(0.75rem, 1.5vw, 1.25rem)',
+                color: 'var(--text-main)',
+                lineHeight: '1.3',
+                opacity: 0.9
+              }}>
                 "{t.text}"
               </p>
-              <div>
-                <h5 className="text-h3" style={{marginBottom: '0.3rem'}}>{t.name}</h5>
-                <p className="text-label" style={{fontSize: '0.7rem'}}>{t.role}</p>
+              <div style={{ marginTop: 'auto' }}>
+                <h5 className="text-h3" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', marginBottom: 'var(--space-xs)' }}>{t.name}</h5>
+                <p className="text-label" style={{ fontSize: '0.6rem', opacity: 0.7 }}>{t.role}</p>
               </div>
             </motion.div>
           ))}
