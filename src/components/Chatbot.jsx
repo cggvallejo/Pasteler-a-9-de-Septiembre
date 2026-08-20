@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, ShoppingCart, Package, MapPin, CreditCard, User, ArrowLeft } from 'lucide-react';
+import { X, ShoppingCart, Package, MapPin, CreditCard, User, ArrowLeft, Send, Sparkles } from 'lucide-react';
 import { products } from '../data/products';
 import Mascot from './Mascot';
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState('welcome');
+  const [step, setStep] = useState('welcome'); // welcome, categories, productList, suggestions, checkoutName, checkoutPayment, checkoutAddress, orderSummary
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [cart, setCart] = useState([]);
   const [userData, setUserData] = useState({ name: '', payment: '', address: '' });
   const [messages, setMessages] = useState([
-    { type: 'bot', text: '¡Hola! ✨ Bienvenido a Pastelería 9 de Septiembre. ¿En qué puedo ayudarte hoy?' }
+    { type: 'bot', text: '¡Hola! ✨ Bienvenido a Pastelería 9 de Septiembre. Soy tu Concierge Dulce. ¿Cómo puedo ayudarte hoy?' }
   ]);
   const scrollRef = useRef(null);
+
+  // Teléfono oficial configurado en el ContactConcierge
+  const businessPhone = '529981894167';
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -26,39 +30,63 @@ const Chatbot = () => {
 
   const addToCart = (product) => {
     setCart(prev => [...prev, product]);
-    addMessage(`Añadiste ${product.name} al carrito. 🍰`);
+    addMessage(`¡Añadido! 🍰 Has agregado "${product.name}" al carrito.`, 'bot');
+    
+    // Sugerencia inteligente cruzada
+    if (product.category === 'Pasteles') {
+      const companion = products.find(p => p.category === 'Petit Fours' || p.category === 'Individuales');
+      if (companion) {
+        setTimeout(() => {
+          addMessage(`✨ Sugerencia: ¿Sabías que nuestros clientes suelen acompañar los pasteles con un delicioso "${companion.name}"?`, 'bot');
+        }, 800);
+      }
+    }
   };
 
   const calculateTotal = () => {
     return cart.reduce((sum, item) => sum + item.price, 0).toFixed(2);
   };
 
-  const getTopSellers = () => {
-    return [...products].sort((a, b) => b.sales - a.sales).slice(0, 5);
+  const getCategories = () => {
+    return [...new Set(products.map(p => p.category))];
+  };
+
+  const handleSuggestionSelect = (type) => {
+    if (type === 'cumple') {
+      addMessage('Para un cumpleaños especial, te recomiendo nuestro pastel insignia:', 'bot');
+      const cake = products.find(p => p.category === 'Pasteles');
+      if (cake) {
+        addToCart(cake);
+      }
+    } else if (type === 'boda') {
+      addMessage('Para bodas y eventos premium, sugerimos un paquete elegante de macarons y tarta fina:', 'bot');
+      products.forEach(p => {
+        if (p.name.includes('Nupcial') || p.name.includes('Macarons')) {
+          addToCart(p);
+        }
+      });
+    } else {
+      addMessage('Para quitarse el antojo hoy mismo, te sugiero algo individual:', 'bot');
+      const cup = products.find(p => p.category === 'Individuales');
+      if (cup) {
+        addToCart(cup);
+      }
+    }
+    setStep('welcome');
   };
 
   const sendToWhatsApp = () => {
-    const businessPhone = '1234567890'; // Replace with actual business phone
-    const orderDetails = cart.map(item => `- ${item.name} ($${item.price})`).join('\\n');
-    const text = `*Nuevo Pedido - Pastelería 9 de Septiembre*\\n\\n` +
-                `*Cliente:* ${userData.name}\\n` +
-                `*Pago:* ${userData.payment}\\n` +
-                `*Dirección:* ${userData.address}\\n\\n` +
-                `*Productos:*\\n${orderDetails}\\n\\n` +
-                `*Total:* $${calculateTotal()}`;
+    const orderDetails = cart.map(item => `- ${item.name} ($${item.price.toFixed(2)})`).join('\n');
+    const text = `🧁 *PASTELERÍA 9 DE SEPTIEMBRE* 🧁\n` +
+                `*NUEVO PEDIDO ESPECIAL*\n\n` +
+                `👤 *Cliente:* ${userData.name}\n` +
+                `💳 *Método de Pago:* ${userData.payment}\n` +
+                `📍 *Dirección:* ${userData.address}\n\n` +
+                `🛍️ *Productos:* \n${orderDetails}\n\n` +
+                `💰 *Total:* $${calculateTotal()}\n\n` +
+                `_Enviado desde el Concierge Digital_`;
     
     window.open(`https://wa.me/${businessPhone}?text=${encodeURIComponent(text)}`, '_blank');
-  };
-
-  const handlePayment = (method) => {
-    setUserData(prev => ({ ...prev, payment: method }));
-    if (method === 'Transferencia') {
-      addMessage('Perfecto. Recuerda, por favor, enviar el comprobante de pago una vez realizada la transferencia para confirmar tu pedido. 😊');
-    } else {
-      addMessage('Entendido, el pago será en efectivo.');
-    }
-    setStep('address');
-    addMessage('Ahora, ¿podrías indicarme tu dirección de envío?');
   };
 
   return (
@@ -72,7 +100,6 @@ const Chatbot = () => {
         >
           <Mascot size={32} />
         </motion.button>
-
       )}
 
       <AnimatePresence>
@@ -88,7 +115,7 @@ const Chatbot = () => {
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="text-brand" style={{fontSize: '1.2rem', letterSpacing: '0.05em'}}>Concierge Dulce</span>
               </div>
-              <button onClick={() => setIsOpen(false)}><X size={20} /></button>
+              <button onClick={() => setIsOpen(false)} style={{background: 'none', border: 'none', color: 'white', cursor: 'pointer'}}><X size={20} /></button>
             </div>
 
             <div className="chatbot-messages" ref={scrollRef}>
@@ -102,27 +129,55 @@ const Chatbot = () => {
             </div>
 
             <div className="chatbot-footer">
+              
+              {/* MENU PRINCIPAL */}
               {step === 'welcome' && (
                 <div className="options-grid">
-                  <button onClick={() => { setStep('products'); addMessage('Aquí tienes nuestros productos:', 'bot'); }}>
-                    <Package size={16} /> Ver Productos
+                  <button onClick={() => { setStep('categories'); addMessage('Por favor, selecciona qué tipo de delicia buscas hoy: 🍰', 'bot'); }}>
+                    <Package size={16} /> Productos
                   </button>
-                  <button onClick={() => { setStep('topSellers'); addMessage('Nuestros favoritos de la casa: ✨', 'bot'); }}>
-                    <ShoppingCart size={16} /> Top Ventas
+                  <button onClick={() => { setStep('suggestions'); addMessage('¡Excelente! Cuéntame, ¿cuál es la ocasión del evento? ✨', 'bot'); }}>
+                    <Sparkles size={16} /> Sugerencias
                   </button>
-                  <button onClick={() => { setStep('checkout'); addMessage('¡Vamos a finalizar tu pedido!', 'bot'); }}>
-                    <User size={16} /> Hacer Pedido
+                  <button onClick={() => { 
+                    if (cart.length === 0) {
+                      addMessage('Tu carrito está vacío. Agrega algunos productos primero para continuar. 😊', 'bot');
+                    } else {
+                      setStep('checkoutName'); 
+                      addMessage('¡Excelente elección! Vamos a preparar tu pedido. ¿Cuál es tu nombre completo?', 'bot');
+                    }
+                  }}>
+                    <User size={16} /> Comprar ({cart.length})
                   </button>
                 </div>
               )}
 
-              {step === 'products' && (
+              {/* SUBMENU: CATEGORÍAS */}
+              {step === 'categories' && (
                 <div className="chat-product-list">
-                  <button className="back-btn" onClick={() => setStep('welcome')}><ArrowLeft size={14} /> Volver</button>
+                  <button className="back-btn" onClick={() => setStep('welcome')}><ArrowLeft size={14} /> Volver al menú principal</button>
+                  <div className="options-grid">
+                    {getCategories().map(cat => (
+                      <button key={cat} onClick={() => {
+                        setSelectedCategory(cat);
+                        setStep('productList');
+                        addMessage(`Aquí tienes nuestra selección de ${cat}:`, 'bot');
+                      }}>
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* SUBMENU: LISTA DE PRODUCTOS POR CATEGORIA */}
+              {step === 'productList' && (
+                <div className="chat-product-list">
+                  <button className="back-btn" onClick={() => setStep('categories')}><ArrowLeft size={14} /> Volver a categorías</button>
                   <div className="scroll-area">
-                    {products.map(p => (
+                    {products.filter(p => p.category === selectedCategory).map(p => (
                       <div key={p.id} className="chat-product-item">
-                        <span>{p.name} - ${p.price}</span>
+                        <span>{p.name} - ${p.price.toFixed(2)}</span>
                         <button onClick={() => addToCart(p)} className="add-tiny-btn">+</button>
                       </div>
                     ))}
@@ -130,83 +185,110 @@ const Chatbot = () => {
                 </div>
               )}
 
-              {step === 'topSellers' && (
+              {/* SUBMENU: SUGERENCIAS POR OCASIÓN */}
+              {step === 'suggestions' && (
                 <div className="chat-product-list">
-                  <button className="back-btn" onClick={() => setStep('welcome')}><ArrowLeft size={14} /> Volver</button>
-                  <div className="scroll-area">
-                    {getTopSellers().map(p => (
-                      <div key={p.id} className="chat-product-item">
-                        <span>{p.name} - ${p.price}</span>
-                        <button onClick={() => addToCart(p)} className="add-tiny-btn">+</button>
-                      </div>
-                    ))}
+                  <button className="back-btn" onClick={() => setStep('welcome')}><ArrowLeft size={14} /> Volver al menú principal</button>
+                  <div className="options-grid">
+                    <button onClick={() => handleSuggestionSelect('cumple')}>🎉 Cumpleaños</button>
+                    <button onClick={() => handleSuggestionSelect('boda')}>💍 Boda / Aniversario</button>
+                    <button onClick={() => handleSuggestionSelect('antojo')}>☕ Antojo de la tarde</button>
                   </div>
                 </div>
               )}
 
-              {step === 'checkout' && (
-                <div className="checkout-flow">
-                  { !userData.name ? (
-                    <div className="input-row">
-                      <input 
-                        placeholder="Tu nombre..." 
-                        value={userData.name}
-                        onChange={(e) => setUserData({...userData, name: e.target.value})}
-                      />
-                      <button onClick={() => {
-                        if(userData.name) {
-                          addMessage(`Hola ${userData.name}, ¿cómo prefieres pagar?`, 'bot');
-                          setStep('payment');
-                        }
-                      }}><Send size={18} /></button>
-                    </div>
-                  ) : (
-                    <div className="cart-summary">
-                      <p><strong>Total: ${calculateTotal()}</strong></p>
-                      <button onClick={() => setStep('welcome')} className="text-btn">Continuar comprando</button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {step === 'payment' && (
-                <div className="options-grid">
-                  <button onClick={() => handlePayment('Transferencia')}><CreditCard size={16} /> Transferencia</button>
-                  <button onClick={() => handlePayment('Efectivo')}><CreditCard size={16} /> Efectivo</button>
-                </div>
-              )}
-
-              {step === 'address' && (
-                <div className="address-flow">
-                  <div className="input-row">
-                    <input 
-                      placeholder="Tu dirección..." 
-                      value={userData.address}
-                      onChange={(e) => setUserData({...userData, address: e.target.value})}
-                    />
-                    <button onClick={() => {
-                      if(navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition((pos) => {
-                          addMessage(`Ubicación capturada: ${pos.coords.latitude}, ${pos.coords.longitude}`, 'bot');
-                          setUserData(prev => ({...prev, address: `${pos.coords.latitude}, ${pos.coords.longitude}`}));
-                        });
+              {/* FLUJO DE COMPRA 1: NOMBRE */}
+              {step === 'checkoutName' && (
+                <div className="input-row">
+                  <input 
+                    placeholder="Escribe tu nombre aquí..." 
+                    defaultValue={userData.name}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && e.target.value.trim()) {
+                        setUserData({ ...userData, name: e.target.value });
+                        addMessage(e.target.value, 'user');
+                        setStep('checkoutPayment');
+                        addMessage('¿Qué método de pago prefieres utilizar para el pedido?', 'bot');
                       }
-                    }}><MapPin size={18} /></button>
-                  </div>
+                    }}
+                  />
+                  <button onClick={(e) => {
+                    const val = e.currentTarget.previousSibling.value;
+                    if (val.trim()) {
+                      setUserData({ ...userData, name: val });
+                      addMessage(val, 'user');
+                      setStep('checkoutPayment');
+                      addMessage('¿Qué método de pago prefieres utilizar para el pedido?', 'bot');
+                    }
+                  }}><Send size={18} /></button>
+                </div>
+              )}
+
+              {/* FLUJO DE COMPRA 2: MÉTODO DE PAGO */}
+              {step === 'checkoutPayment' && (
+                <div className="options-grid">
+                  <button onClick={() => {
+                    setUserData({ ...userData, payment: 'Transferencia' });
+                    addMessage('Transferencia Bancaria', 'user');
+                    setStep('checkoutAddress');
+                    addMessage('Perfecto. Ahora, por favor ingresa tu dirección para calcular el envío:', 'bot');
+                  }}><CreditCard size={16} /> Transferencia</button>
+                  <button onClick={() => {
+                    setUserData({ ...userData, payment: 'Efectivo contra entrega' });
+                    addMessage('Efectivo contra entrega', 'user');
+                    setStep('checkoutAddress');
+                    addMessage('Perfecto. Ahora, por favor ingresa tu dirección para calcular el envío:', 'bot');
+                  }}><CreditCard size={16} /> Efectivo</button>
+                </div>
+              )}
+
+              {/* FLUJO DE COMPRA 3: DIRECCIÓN */}
+              {step === 'checkoutAddress' && (
+                <div className="input-row">
+                  <input 
+                    placeholder="Ingresa tu dirección..." 
+                    defaultValue={userData.address}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && e.target.value.trim()) {
+                        setUserData({ ...userData, address: e.target.value });
+                        addMessage(e.target.value, 'user');
+                        setStep('orderSummary');
+                        addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                      }
+                    }}
+                  />
+                  <button onClick={(e) => {
+                    const val = e.currentTarget.previousSibling.value;
+                    if (val.trim()) {
+                      setUserData({ ...userData, address: val });
+                      addMessage(val, 'user');
+                      setStep('orderSummary');
+                      addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                    }
+                  }}><Send size={18} /></button>
+                </div>
+              )}
+
+              {/* FLUJO DE COMPRA 4: CONFIRMACIÓN FINAL */}
+              {step === 'orderSummary' && (
+                <div className="cart-summary">
+                  <p style={{fontSize: '0.9rem', marginBottom: '0.5rem'}}>Total: <strong>${calculateTotal()}</strong></p>
                   <button 
-                    className="confirm-btn" 
+                    className="confirm-btn"
                     onClick={() => {
-                      addMessage('¡Pedido listo! Te redirigiremos a WhatsApp para finalizar.', 'bot');
                       sendToWhatsApp();
-                      setStep('welcome');
                       setCart([]);
                       setUserData({ name: '', payment: '', address: '' });
+                      addMessage('¡Muchas gracias por tu pedido! Te hemos redirigido a WhatsApp para finalizar la entrega.', 'bot');
+                      setStep('welcome');
                     }}
                   >
                     Confirmar y Enviar WhatsApp
                   </button>
+                  <button onClick={() => setStep('welcome')} className="text-btn" style={{marginTop: '0.5rem', display: 'block', margin: '0.5rem auto 0'}}>Cancelar y volver</button>
                 </div>
               )}
+
             </div>
           </motion.div>
         )}
