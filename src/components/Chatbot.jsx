@@ -287,11 +287,22 @@ const Chatbot = () => {
                       if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition((pos) => {
                           const { latitude, longitude } = pos.coords;
-                          const locationUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-                          addMessage(`Ubicación GPS detectada.`, 'user');
-                          setUserData({ ...userData, address: `Ubicación GPS (Cancún): ${locationUrl}` });
-                          setStep('orderSummary');
-                          addMessage('¡Ubicación cargada con éxito! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                          
+                          // Límites geográficos de Cancún (Bounding Box aproximado)
+                          const minLat = 21.00;
+                          const maxLat = 21.25;
+                          const minLon = -87.10;
+                          const maxLon = -86.75;
+                          
+                          if (latitude >= minLat && latitude <= maxLat && longitude >= minLon && longitude <= maxLon) {
+                            const locationUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                            addMessage(`Ubicación GPS detectada.`, 'user');
+                            setUserData({ ...userData, address: `Ubicación GPS (Cancún): ${locationUrl}` });
+                            setStep('orderSummary');
+                            addMessage('¡Ubicación cargada con éxito! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                          } else {
+                            addMessage(`⚠️ Lo sentimos, tu ubicación actual (${latitude.toFixed(4)}, ${longitude.toFixed(4)}) se encuentra fuera de nuestra zona de cobertura en Cancún, Q.Roo. Por favor, escribe tu dirección de entrega en Cancún manualmente.`, 'bot');
+                          }
                         }, () => {
                           addMessage('❌ No se pudo acceder a tu ubicación. Por favor, escribe tu dirección manualmente en el campo.', 'bot');
                         });
