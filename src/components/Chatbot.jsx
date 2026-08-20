@@ -242,28 +242,41 @@ const Chatbot = () => {
                 </div>
               )}
 
-              {/* FLUJO DE COMPRA 3: DIRECCIÓN */}
+              {/* FLUJO DE COMPRA 3: DIRECCIÓN CON VALIDACIÓN DE CANCÚN */}
               {step === 'checkoutAddress' && (
                 <div className="input-row">
                   <input 
-                    placeholder="Ingresa tu dirección..." 
+                    placeholder="Ingresa tu dirección en Cancún..." 
                     defaultValue={userData.address}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && e.target.value.trim()) {
-                        setUserData({ ...userData, address: e.target.value });
-                        addMessage(e.target.value, 'user');
-                        setStep('orderSummary');
-                        addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                        const val = e.target.value;
+                        addMessage(val, 'user');
+                        
+                        // Validación de Cancún
+                        if (!val.toLowerCase().includes('cancun') && !val.toLowerCase().includes('cancún')) {
+                          addMessage('⚠️ Lo sentimos, actualmente solo realizamos entregas locales dentro de Cancún, Q.Roo. Por favor, asegúrate de ingresar una dirección válida en Cancún.', 'bot');
+                        } else {
+                          setUserData({ ...userData, address: val });
+                          setStep('orderSummary');
+                          addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                        }
                       }
                     }}
                   />
                   <button onClick={(e) => {
                     const val = e.currentTarget.previousSibling.value;
                     if (val.trim()) {
-                      setUserData({ ...userData, address: val });
                       addMessage(val, 'user');
-                      setStep('orderSummary');
-                      addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                      
+                      // Validación de Cancún
+                      if (!val.toLowerCase().includes('cancun') && !val.toLowerCase().includes('cancún')) {
+                        addMessage('⚠️ Lo sentimos, actualmente solo realizamos entregas locales dentro de Cancún, Q.Roo. Por favor, asegúrate de ingresar una dirección válida en Cancún.', 'bot');
+                      } else {
+                        setUserData({ ...userData, address: val });
+                        setStep('orderSummary');
+                        addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                      }
                     }
                   }}><Send size={18} /></button>
                 </div>
