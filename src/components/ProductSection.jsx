@@ -8,7 +8,7 @@ const ProductSection = () => {
   return (
     <section id="tienda" className="section-py bg-soft">
       <div className="container">
-        <div className="flex justify-between items-end" style={{ marginBottom: 'var(--space-lg)' }}>
+        <div className="flex flex-col md-flex-row justify-between items-center md-items-end text-center md-text-left" style={{ marginBottom: 'var(--space-lg)' }}>
           <div>
             <span className="text-label" style={{ display: 'block', marginBottom: 'var(--space-xs)' }}>Colección Exclusiva</span>
             <h2 className="text-h2">Para Momentos Especiales</h2>

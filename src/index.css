@@ -475,9 +475,21 @@ body, p, span, li, a {
   border-top: 1px solid var(--primary-pink);
 }
 
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 0 1.5rem 0 !important;
+  }
+}
+
 .footer-grid {
   grid-template-columns: repeat(auto-fit, minmax(clamp(160px, 20vw, 220px), 1fr));
   gap: clamp(2rem, 5vw, 4rem);
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    gap: 1.5rem !important;
+  }
 }
 
 .social-icon {
