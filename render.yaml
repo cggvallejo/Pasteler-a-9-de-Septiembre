@@ -1,5 +1,6 @@
 services:
-  - type: static
+  - type: web
     name: pasteleria-9-septiembre
+    runtime: static
     buildCommand: npm install && npm run build
-    publishPath: dist
+    staticPublishPath: dist
