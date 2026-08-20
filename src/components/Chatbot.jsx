@@ -242,19 +242,36 @@ const Chatbot = () => {
                 </div>
               )}
 
-              {/* FLUJO DE COMPRA 3: DIRECCIÓN CON VALIDACIÓN DE CANCÚN */}
+              {/* FLUJO DE COMPRA 3: DIRECCIÓN CON VALIDACIÓN DE CANCÚN Y GPS */}
               {step === 'checkoutAddress' && (
-                <div className="input-row">
-                  <input 
-                    placeholder="Ingresa tu dirección en Cancún..." 
-                    defaultValue={userData.address}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && e.target.value.trim()) {
-                        const val = e.target.value;
+                <div className="flex flex-col gap-sm">
+                  <div className="input-row">
+                    <input 
+                      placeholder="Dirección o usa el botón de GPS..." 
+                      defaultValue={userData.address}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.target.value.trim()) {
+                          const val = e.target.value;
+                          addMessage(val, 'user');
+                          
+                          // Validación de Cancún (si no es link de coordenadas, valida el texto)
+                          if (!val.includes('maps?q=') && !val.toLowerCase().includes('cancun') && !val.toLowerCase().includes('cancún')) {
+                            addMessage('⚠️ Lo sentimos, actualmente solo realizamos entregas locales dentro de Cancún, Q.Roo. Por favor, asegúrate de ingresar una dirección válida en Cancún.', 'bot');
+                          } else {
+                            setUserData({ ...userData, address: val });
+                            setStep('orderSummary');
+                            addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                          }
+                        }
+                      }}
+                    />
+                    <button onClick={(e) => {
+                      const val = e.currentTarget.previousSibling.value;
+                      if (val.trim()) {
                         addMessage(val, 'user');
                         
                         // Validación de Cancún
-                        if (!val.toLowerCase().includes('cancun') && !val.toLowerCase().includes('cancún')) {
+                        if (!val.includes('maps?q=') && !val.toLowerCase().includes('cancun') && !val.toLowerCase().includes('cancún')) {
                           addMessage('⚠️ Lo sentimos, actualmente solo realizamos entregas locales dentro de Cancún, Q.Roo. Por favor, asegúrate de ingresar una dirección válida en Cancún.', 'bot');
                         } else {
                           setUserData({ ...userData, address: val });
@@ -262,23 +279,31 @@ const Chatbot = () => {
                           addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
                         }
                       }
-                    }}
-                  />
-                  <button onClick={(e) => {
-                    const val = e.currentTarget.previousSibling.value;
-                    if (val.trim()) {
-                      addMessage(val, 'user');
-                      
-                      // Validación de Cancún
-                      if (!val.toLowerCase().includes('cancun') && !val.toLowerCase().includes('cancún')) {
-                        addMessage('⚠️ Lo sentimos, actualmente solo realizamos entregas locales dentro de Cancún, Q.Roo. Por favor, asegúrate de ingresar una dirección válida en Cancún.', 'bot');
+                    }}><Send size={18} /></button>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      addMessage('📍 Intentando obtener tu ubicación actual...', 'bot');
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((pos) => {
+                          const { latitude, longitude } = pos.coords;
+                          const locationUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                          addMessage(`Ubicación GPS detectada.`, 'user');
+                          setUserData({ ...userData, address: `Ubicación GPS (Cancún): ${locationUrl}` });
+                          setStep('orderSummary');
+                          addMessage('¡Ubicación cargada con éxito! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                        }, () => {
+                          addMessage('❌ No se pudo acceder a tu ubicación. Por favor, escribe tu dirección manualmente en el campo.', 'bot');
+                        });
                       } else {
-                        setUserData({ ...userData, address: val });
-                        setStep('orderSummary');
-                        addMessage('¡Todo listo! A continuación verás el resumen de tu pedido. Confirma para enviarlo por WhatsApp.', 'bot');
+                        addMessage('❌ Tu navegador no soporta geolocalización. Por favor, escribe tu dirección manualmente.', 'bot');
                       }
-                    }
-                  }}><Send size={18} /></button>
+                    }}
+                    className="confirm-btn"
+                    style={{ background: 'var(--accent-gold)', marginTop: '0', padding: '0.6rem' }}
+                  >
+                    📍 Usar mi ubicación GPS
+                  </button>
                 </div>
               )}
 
